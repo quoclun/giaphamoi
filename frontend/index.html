@@ -1,0 +1,12 @@
+<!DOCTYPE html><html><body>
+<h1>Gia phả</h1>
+<button onclick="callApi()">Gọi API backend</button>
+<pre id="out"></pre>
+<script>
+function callApi(){
+ fetch('/api/hello').then(r=>r.json()).then(d=>{
+  document.getElementById('out').textContent=JSON.stringify(d)
+ })
+}
+</script>
+</body></html>
