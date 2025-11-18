@@ -1,12 +1,47 @@
-<!DOCTYPE html><html><body>
-<h1>Gia phả</h1>
-<button onclick="callApi()">Gọi API backend</button>
-<pre id="out"></pre>
-<script>
-function callApi(){
- fetch('/api/hello').then(r=>r.json()).then(d=>{
-  document.getElementById('out').textContent=JSON.stringify(d)
- })
-}
-</script>
-</body></html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Cây Gia Phả</title>
+  <style>
+    ul { list-style-type: none; }
+    li { margin: 5px 0; }
+    .node { padding: 5px; border: 1px solid #ccc; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h1>Cây Gia Phả</h1>
+  <div id="tree"></div>
+
+  <script>
+    async function fetchMembers() {
+      const res = await fetch('/members');
+      const members = await res.json();
+      return members;
+    }
+
+    function buildTree(members, parentId = null) {
+      const ul = document.createElement('ul');
+      members
+        .filter(m => m.parentId === parentId)
+        .forEach(m => {
+          const li = document.createElement('li');
+          li.innerHTML = `<span class="node">${m.name}</span>`;
+          const children = buildTree(members, m.id);
+          if (children) li.appendChild(children);
+          ul.appendChild(li);
+        });
+      return ul.children.length ? ul : null;
+    }
+
+    async function renderTree() {
+      const members = await fetchMembers();
+      const treeContainer = document.getElementById('tree');
+      const tree = buildTree(members);
+      if (tree) treeContainer.appendChild(tree);
+    }
+
+    renderTree();
+  </script>
+</body>
+</html>
